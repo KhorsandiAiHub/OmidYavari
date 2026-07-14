@@ -131,26 +131,16 @@
 <h2>مربی: معید</h2>
 <div class="badge-percent" id="percent_moeid">۰%</div>
 </div>
-<div class="form-row">
-<div>
-<label>وضعیت حضور</label>
-<select id="attendance_moeid" onchange="handleAttendanceChange('moeid')">
-<option value="حاضر">حاضر</option>
-<option value="غایب">غایب</option>
-</select>
-</div>
-<div></div>
-</div>
 <!-- فیلدهای حضور معید -->
 <div id="presenceFields_moeid">
 <div class="form-row">
 <div>
 <label>ساعت ورود</label>
-<select class="time-select" dir="ltr" id="entry_moeid"></select>
+<select class="time-select" dir="ltr" id="entry_moeid" required></select>
 </div>
 <div>
 <label>ساعت خروج</label>
-<select class="time-select" dir="ltr" id="exit_moeid"></select>
+<select class="time-select" dir="ltr" id="exit_moeid" required></select>
 </div>
 </div>
 <div class="item">
@@ -240,7 +230,6 @@
 <tr>
 <th>تاریخ</th>
 <th>نام مربی</th>
-<th>وضعیت حضور</th>
 <th>ورود</th>
 <th>خروج</th>
 <th>امتیاز نهایی</th>
@@ -294,40 +283,13 @@
       box.textContent = message;
     }
 
-    function handleAttendanceChange(coach) {
-      const status = document.getElementById('attendance_' + coach).value;
-      const targetDiv = document.getElementById('presenceFields_' + coach);
-      
-      if (status === 'حاضر') {
-        targetDiv.classList.remove('hidden-fields');
-      } else {
-        targetDiv.classList.add('hidden-fields');
-        document.getElementById('entry_' + coach).value = '';
-        document.getElementById('exit_' + coach).value = '';
-        document.getElementById('skip_lunch_' + coach).checked = false;
-        document.querySelectorAll('.task_' + coach).forEach(cb => cb.checked = false);
-      }
-      calculateScores();
-    }
-
     function calculateScores() {
       const publicCheckboxes = [...document.querySelectorAll('.public-task')];
       let publicScore = 0;
       publicCheckboxes.forEach(cb => {
         if (cb.checked) publicScore += 2;
       });
-
       const coach = COACH_ID;
-      const attendance = document.getElementById('attendance_' + coach).value;
-      
-      if (attendance !== 'حاضر') {
-        document.getElementById('score_' + coach).textContent = '0';
-        document.getElementById('max_' + coach).textContent = '0';
-        document.getElementById('percent_' + coach).textContent = '0%';
-        document.getElementById('status_' + coach).textContent = 'غایب';
-        return;
-      }
-
       const isSkipped = document.getElementById('skip_lunch_' + coach).checked;
       const lunchTask = document.getElementById('task_lunch_' + coach);
       
@@ -362,24 +324,6 @@
     }
 
     function getEvaluationDataFor(coach, nameKey) {
-      const attendance = document.getElementById('attendance_' + coach).value;
-      if (attendance !== 'حاضر') {
-        return {
-          formType: 'Coach',
-          date: document.getElementById('globalDate').value,
-          coachName: nameKey,
-          attendanceStatus: attendance,
-          entryTime: '-',
-          exitTime: '-',
-          ratings: ['غایب'],
-          note: '', 
-          total: 0,
-          max: 0,
-          percent: 0,
-          createdAt: new Date().toLocaleString('fa-IR')
-        };
-      }
-
       const isSkipped = document.getElementById('skip_lunch_' + coach).checked;
       const personalCheckboxes = [...document.querySelectorAll('.task_' + coach)];
       const publicCheckboxes = [...document.querySelectorAll('.public-task')];
@@ -401,7 +345,7 @@
       return {
         date: document.getElementById('globalDate').value,
         coachName: nameKey,
-        attendanceStatus: attendance,
+        attendanceStatus: 'حاضر',
         entryTime: document.getElementById('entry_' + coach).value || '-',
         exitTime: document.getElementById('exit_' + coach).value || '-',
         ratings: [personalStatus, publicStatus],
@@ -413,9 +357,33 @@
       };
     }
 
+    function validateRequiredAttendanceTimes(coach) {
+      const entrySelect = document.getElementById('entry_' + coach);
+      const exitSelect = document.getElementById('exit_' + coach);
+      const entryTime = entrySelect.value;
+      const exitTime = exitSelect.value;
+
+      entrySelect.style.borderColor = '';
+      exitSelect.style.borderColor = '';
+
+      if (!entryTime || !exitTime) {
+        if (!entryTime) entrySelect.style.borderColor = '#b42318';
+        if (!exitTime) exitSelect.style.borderColor = '#b42318';
+        setStatus('ثبت انجام نشد: ثبت ساعت ورود و ساعت خروج الزامی است.', 'error');
+        alert('لطفاً ساعت ورود و ساعت خروج را ثبت کنید. بدون این دو مورد، امکان ثبت ارزیابی وجود ندارد.');
+        return false;
+      }
+
+      return true;
+    }
+
     async function saveEvaluation() {
       if (!isConfigured()) {
         alert('لطفاً ابتدا آدرس وب‌اپ را در متغیر SHEET_WEB_APP_URL قرار دهید.');
+        return;
+      }
+
+      if (!validateRequiredAttendanceTimes(COACH_ID)) {
         return;
       }
 
@@ -463,7 +431,6 @@
             row.innerHTML = `
               <td>${r.date || '-'}</td>
               <td><strong>${r.coachName || '-'}</strong></td>
-              <td>${r.attendanceStatus || 'حاضر'}</td>
               <td>${r.entryTime || '-'}</td>
               <td>${r.exitTime || '-'}</td>
               <td>${r.total} از ${r.max}</td>
@@ -541,7 +508,6 @@
       document.getElementById('globalDate').value = getPersianDate();
       
       const c = COACH_ID;
-      document.getElementById('attendance_' + c).selectedIndex = 0;
       document.getElementById('entry_' + c).value = '';
       document.getElementById('exit_' + c).value = '';
       document.getElementById('skip_lunch_' + c).checked = false;
@@ -550,15 +516,12 @@
         cb.checked = false;
         cb.disabled = false;
       });
-      handleAttendanceChange(c);
 
       document.querySelectorAll('.public-task').forEach(cb => cb.checked = false);
 
       calculateScores();
       if(showMsg) setStatus('فرم‌ها ریست شدند و آماده ثبت جدید هستند.', 'success');
     }
-
-    handleAttendanceChange(COACH_ID);
     calculateScores();
     
     if(isConfigured()) {
