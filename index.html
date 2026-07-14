@@ -1,1894 +1,569 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>سازنده برنامه تمرینی آکادمی امیدیاوری</title>
-
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>سیستم ارزیابی روزانه مربی معید</title>
+<!-- کتابخانه نمودار ساز Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --academy-green: #0f8a5f;
+      --academy-green-dark: #07543d;
+      --academy-green-soft: #e8f7f1;
+      --luxury-gold: #c99a2e;
+      --luxury-gold-soft: #fff5dc;
+      --ink: #17342b;
+      --muted: #6b7c73;
+      --line: #dce8e2;
+      --card: rgba(255, 255, 255, 0.94);
+    }
     body {
-      font-family: Tahoma, Arial, sans-serif;
-      background: #0f172a;
       margin: 0;
-      padding: 18px;
-      color: #111827;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: auto;
-    }
-
-    .card {
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 22px;
-      margin-bottom: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-    }
-
-    .top-card {
-      background: linear-gradient(135deg, #020617, #1e293b);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.12);
-    }
-
-    .brand-badge {
-      display: inline-block;
-      background: #f97316;
-      color: white;
-      padding: 7px 14px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: bold;
-      margin-bottom: 12px;
-    }
-
-    h1, h2, h3 {
-      margin-top: 0;
-    }
-
-    .muted {
-      color: #64748b;
-      font-size: 14px;
+      font-family: 'B Nazanin', 'BNazanin', Tahoma, Arial, sans-serif;
+      background: radial-gradient(circle at 12% 5%, rgba(15, 138, 95, .13), transparent 28%), radial-gradient(circle at 88% 0%, rgba(201, 154, 46, .16), transparent 30%), linear-gradient(180deg, #fbfff9 0%, #f3f8f2 42%, #eef5ef 100%);
+      color: var(--ink);
       line-height: 1.9;
+      min-height: 100vh;
     }
-
-    .top-card .muted {
-      color: #cbd5e1;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 13px;
-      border: 1px solid #d1d5db;
-      border-radius: 14px;
-      margin-bottom: 14px;
-      font-family: inherit;
-      font-size: 15px;
-      background: #ffffff;
-    }
-
-    textarea {
-      min-height: 82px;
-      resize: vertical;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-    }
-
-    button {
-      border: none;
-      border-radius: 14px;
-      padding: 13px 18px;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: bold;
-      margin: 4px;
-    }
-
-    .btn-primary {
-      background: #f97316;
-      color: white;
-    }
-
-    .btn-success {
-      background: #16a34a;
-      color: white;
-    }
-
-    .btn-danger {
-      background: #dc2626;
-      color: white;
-      padding: 9px 12px;
-      font-size: 13px;
-    }
-
-    .btn-edit {
-      background: #2563eb;
-      color: white;
-      padding: 9px 12px;
-      font-size: 13px;
-    }
-
-    .btn-dark {
-      background: #020617;
-      color: white;
-    }
-
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #111827;
-    }
-
-    .editing-alert {
-      display: none;
-      background: #fff7ed;
-      border: 1px solid #fdba74;
-      color: #9a3412;
-      padding: 12px;
-      border-radius: 14px;
-      margin-bottom: 14px;
-      font-weight: bold;
-    }
-
-    .small-note {
-      font-size: 13px;
-      color: #64748b;
-      margin-top: 8px;
-      line-height: 1.8;
-    }
-
-    .image-preview {
-      display: none;
-      width: 100%;
-      max-height: 260px;
-      object-fit: cover;
-      border-radius: 18px;
-      margin-top: 10px;
-      border: 1px solid #e5e7eb;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12px;
-      overflow: hidden;
-      border-radius: 14px;
-    }
-
-    th, td {
-      border: 1px solid #e5e7eb;
-      padding: 10px;
-      text-align: right;
-      font-size: 14px;
-    }
-
-    th {
-      background: #f8fafc;
-    }
-
-    .preview-header {
-      background: linear-gradient(135deg, #020617, #1e293b);
-      color: white;
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 16px;
-      border-bottom: 5px solid #f97316;
-    }
-
-    .preview-brand {
-      color: #fb923c;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .exercise-card {
-      border: 1px solid #e5e7eb;
-      border-radius: 18px;
-      padding: 16px;
-      margin-bottom: 12px;
-      background: #ffffff;
-    }
-
-    .rest-preview {
-      background: #fff7ed;
-      border: 1px dashed #fb923c;
-      border-radius: 16px;
-      padding: 14px;
-      margin: -4px 0 14px;
-    }
-
-    .actions {
-      margin-top: 15px;
-    }
-
-    @media (max-width: 760px) {
-      .grid, .grid-3 {
-        grid-template-columns: 1fr;
-      }
-
-      body {
-        padding: 10px;
-      }
-
-      .card {
-        padding: 16px;
-      }
-
-      table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-  <div class="container">
-
-    <div class="card top-card">
-      <div class="brand-badge">آکادمی امیدیاوری</div>
-      <h1>سازنده برنامه تمرینی</h1>
-      <p class="muted">
-        اطلاعات ورزشکار و حرکات را وارد کن، سپس فایل برنامه را دانلود کن.
-      </p>
-    </div>
-
-    <div class="card">
-      <h2>اطلاعات اصلی برنامه</h2>
-
-      <div class="grid">
-        <div>
-          <label>اسم ورزشکار</label>
-          <input type="text" id="athleteName" value="محمد صالح خورسندی" oninput="renderPreview()" />
-        </div>
-
-        <div>
-          <label>شماره برنامه</label>
-          <input type="number" id="programNumber" value="2" oninput="renderPreview()" />
-        </div>
-      </div>
-
-      <label>توضیح کلی برنامه</label>
-      <textarea id="generalNote" oninput="renderPreview()">این برنامه تخصصی برای شما طراحی شده است ، از ارسال برنامه برای دیگران خودداری کنید؛ بعد از هر جلسه تمرین با پشتیبان خود در ارتباط باشید و بعد از اتمام برنامه وظیفه پیگیری دریافت برنامه جدید برعهده خودتان می باشد.</textarea>
-    </div>
-
-    <div class="card">
-      <h2>اطلاعات پشتیبانی</h2>
-
-      <label>انتخاب پشتیبان</label>
-      <select id="supportPerson" onchange="renderPreview()">
-        <option value="moeid">معید</option>
-        <option value="abolfazl">ابالفضل</option>
-      </select>
-
-      <p class="small-note">
-      نام و اکانت پشتیبان در برنامه نمایش داده خواهد شد.
-      </p>
-    </div>
-
-    <div class="card">
-      <h2>اضافه کردن / ویرایش حرکت</h2>
-
-      <div id="editingAlert" class="editing-alert">
-        در حال ویرایش حرکت هستی. بعد از اصلاح، دکمه «ذخیره تغییرات» را بزن.
-      </div>
-
-      <p class="small-note">
-        شماره حرکت به‌صورت خودکار و بر اساس ترتیب اضافه شدن حرکات ساخته می‌شود.
-      </p>
-
-      <div class="grid-3">
-        <div>
-          <label>حرکت</label>
-          <input type="text" id="movement" placeholder="مثلاً پرس سینه" />
-        </div>
-
-        <div>
-          <label>تعداد</label>
-          <select id="reps"></select>
-        </div>
-
-        <div>
-          <label>ست</label>
-          <select id="sets"></select>
-        </div>
-      </div>
-
-      <div class="grid">
-        <div>
-          <label>استراحت بعد از این حرکت</label>
-          <select id="restTime"></select>
-        </div>
-
-        <div>
-          <label>فشار حرکت</label>
-          <select id="intensity">
-            <option value="سبک">سبک</option>
-            <option value="متوسط">متوسط</option>
-            <option value="نسبتاً سنگین">نسبتاً سنگین</option>
-            <option value="سنگین">سنگین</option>
-            <option value="خیلی سنگین">خیلی سنگین</option>
-          </select>
-        </div>
-      </div>
-
-      <label>توضیح فنی</label>
-      <textarea id="technicalNote" placeholder="مثلاً: کمر ثابت، حرکت با کنترل، مکث کوتاه پایین حرکت"></textarea>
-
-      <button id="addButton" class="btn-primary" onclick="addExercise()">اضافه کردن حرکت</button>
-      <button id="saveButton" class="btn-success" onclick="saveEdit()" style="display:none;">ذخیره تغییرات</button>
-      <button class="btn-secondary" onclick="cancelEdit()">لغو / پاک کردن فرم</button>
-    </div>
-
-    <div class="card">
-      <h2>لیست حرکات</h2>
-
-      <table>
-        <thead>
-          <tr>
-            <th>شماره</th>
-            <th>حرکت</th>
-            <th>تعداد</th>
-            <th>ست</th>
-            <th>استراحت</th>
-            <th>فشار حرکت</th>
-            <th>ویرایش</th>
-            <th>حذف</th>
-          </tr>
-        </thead>
-        <tbody id="exerciseTable"></tbody>
-      </table>
-
-      <div class="actions">
-        <button class="btn-success" onclick="renderPreview()">نمایش پیش‌نمایش</button>
-        <button class="btn-dark" onclick="downloadHTML()">دانلود فایل برنامه</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>پیش‌نمایش برای ورزشکار</h2>
-      <div id="preview"></div>
-    </div>
-
-  </div>
-
-  <script>
-    let exercises = [];
-    let editingIndex = null;
-    let athleteImageData = "";
-
-    const supportPeople = {
-      moeid: {
-        name: "معید",
-        account: "moeid_username"
-      },
-      abolfazl: {
-        name: "ابالفضل",
-        account: "abolfazl_username"
-      }
-    };
-
-    const feedbackOptions = [
-      "مناسب بود",
-      "درد خفیف داشتم",
-      "درد داشتم"
-    ];
-
-    function handleImageUpload(event) {
-      const file = event.target.files[0];
-
-      if (!file) {
-        athleteImageData = "";
-        document.getElementById("imagePreview").style.display = "none";
-        renderPreview();
-        return;
-      }
-
-      const reader = new FileReader();
-
-      reader.onload = function(e) {
-        athleteImageData = e.target.result;
-        const preview = document.getElementById("imagePreview");
-        preview.src = athleteImageData;
-        preview.style.display = "block";
-        renderPreview();
-      };
-
-      reader.readAsDataURL(file);
-    }
-
-    function getSelectedSupport() {
-      const selected = document.getElementById("supportPerson").value;
-      return supportPeople[selected];
-    }
-
-    function fillRepsOptions() {
-      const reps = document.getElementById("reps");
-      reps.innerHTML = "";
-
-      for (let i = 1; i <= 24; i++) {
-        const option = document.createElement("option");
-        option.value = String(i);
-        option.textContent = String(i);
-        reps.appendChild(option);
-      }
-
-      reps.value = "12";
-    }
-
-    function fillSetsOptions() {
-      const sets = document.getElementById("sets");
-      sets.innerHTML = "";
-
-      for (let i = 1; i <= 8; i++) {
-        const option = document.createElement("option");
-        option.value = String(i);
-        option.textContent = String(i);
-        sets.appendChild(option);
-      }
-
-      sets.value = "3";
-    }
-
-    function fillRestOptions() {
-      const restTime = document.getElementById("restTime");
-      restTime.innerHTML = "";
-
-      for (let seconds = 30; seconds <= 300; seconds += 30) {
-        const option = document.createElement("option");
-
-        if (seconds < 60) {
-          option.value = seconds + " ثانیه";
-          option.textContent = seconds + " ثانیه";
-        } else {
-          const minutes = Math.floor(seconds / 60);
-          const remainingSeconds = seconds % 60;
-
-          if (remainingSeconds === 0) {
-            option.value = minutes + " دقیقه";
-            option.textContent = minutes + " دقیقه";
-          } else {
-            option.value = minutes + " دقیقه و " + remainingSeconds + " ثانیه";
-            option.textContent = minutes + " دقیقه و " + remainingSeconds + " ثانیه";
-          }
-        }
-
-        restTime.appendChild(option);
-      }
-
-      restTime.value = "1 دقیقه";
-    }
-
-    function renumberExercises() {
-      exercises.forEach(function(exercise, index) {
-        exercise.movementNumber = index + 1;
-      });
-    }
-
-    function getExerciseFromForm() {
-      const movement = document.getElementById("movement").value.trim();
-      const reps = document.getElementById("reps").value;
-      const sets = document.getElementById("sets").value;
-      const technicalNote = document.getElementById("technicalNote").value.trim();
-      const restTime = document.getElementById("restTime").value;
-      const intensity = document.getElementById("intensity").value;
-
-      if (!movement) {
-        alert("لطفاً نام حرکت را وارد کن.");
-        return null;
-      }
-
-      return {
-        movementNumber: editingIndex === null ? exercises.length + 1 : editingIndex + 1,
-        movement,
-        reps,
-        sets,
-        technicalNote,
-        restTime,
-        intensity
-      };
-    }
-
-    function addExercise() {
-      const exercise = getExerciseFromForm();
-      if (!exercise) return;
-
-      exercises.push(exercise);
-      renumberExercises();
-      clearExerciseForm();
-      updateTable();
-      renderPreview();
-    }
-
-    function editExercise(index) {
-      const exercise = exercises[index];
-      editingIndex = index;
-
-      document.getElementById("movement").value = exercise.movement;
-      document.getElementById("reps").value = exercise.reps;
-      document.getElementById("sets").value = exercise.sets;
-      document.getElementById("technicalNote").value = exercise.technicalNote || "";
-      document.getElementById("restTime").value = exercise.restTime;
-      document.getElementById("intensity").value = exercise.intensity;
-
-      document.getElementById("editingAlert").style.display = "block";
-      document.getElementById("addButton").style.display = "none";
-      document.getElementById("saveButton").style.display = "inline-block";
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function saveEdit() {
-      if (editingIndex === null) return;
-
-      const exercise = getExerciseFromForm();
-      if (!exercise) return;
-
-      exercises[editingIndex] = exercise;
-      renumberExercises();
-      editingIndex = null;
-
-      clearExerciseForm();
-      updateTable();
-      renderPreview();
-    }
-
-    function cancelEdit() {
-      editingIndex = null;
-      clearExerciseForm();
-    }
-
-    function clearExerciseForm() {
-      document.getElementById("movement").value = "";
-      document.getElementById("reps").value = "12";
-      document.getElementById("sets").value = "3";
-      document.getElementById("technicalNote").value = "";
-      document.getElementById("restTime").value = "1 دقیقه";
-      document.getElementById("intensity").value = "متوسط";
-
-      document.getElementById("editingAlert").style.display = "none";
-      document.getElementById("addButton").style.display = "inline-block";
-      document.getElementById("saveButton").style.display = "none";
-    }
-
-    function deleteExercise(index) {
-      if (!confirm("این حرکت حذف شود؟")) return;
-
-      exercises.splice(index, 1);
-      renumberExercises();
-      updateTable();
-      renderPreview();
-
-      if (editingIndex === index) {
-        cancelEdit();
-      }
-    }
-
-    function updateTable() {
-      const table = document.getElementById("exerciseTable");
-      table.innerHTML = "";
-
-      exercises.forEach(function(exercise, index) {
-        table.innerHTML += `
-          <tr>
-            <td>${exercise.movementNumber}</td>
-            <td>${exercise.movement}</td>
-            <td>${exercise.reps}</td>
-            <td>${exercise.sets}</td>
-            <td>${exercise.restTime}</td>
-            <td>${exercise.intensity}</td>
-            <td>
-              <button class="btn-edit" onclick="editExercise(${index})">ویرایش</button>
-            </td>
-            <td>
-              <button class="btn-danger" onclick="deleteExercise(${index})">حذف</button>
-            </td>
-          </tr>
-        `;
-      });
-    }
-
-    function renderPreview() {
-      const athleteName = document.getElementById("athleteName").value.trim() || "ورزشکار";
-      const programNumber = document.getElementById("programNumber").value.trim() || "-";
-      const generalNote = document.getElementById("generalNote").value.trim();
-
-      const selectedSupport = getSelectedSupport();
-      const supportName = selectedSupport.name;
-      const supportAccount = selectedSupport.account;
-
-      let html = "";
-
-      if (athleteImageData) {
-        html += `<img src="${athleteImageData}" style="width:100%;max-height:260px;object-fit:cover;border-radius:18px;margin-bottom:14px;" />`;
-      }
-
-      html += `
-        <div class="preview-header">
-          <div class="preview-brand">آکادمی امیدیاوری</div>
-          <h1>برنامه تخصصی ${athleteName}</h1>
-          <p>شماره برنامه: ${programNumber}</p>
-        </div>
-
-        <div class="exercise-card">
-          <h3>توضیح کلی</h3>
-          <p>${generalNote || "توضیحی ثبت نشده است."}</p>
-        </div>
-
-        <div class="exercise-card">
-          <h3>شروع جلسه جدید / Reset</h3>
-          <p>در خروجی نهایی، دکمه شروع جلسه جدید قبل از اولین حرکت قرار می‌گیرد.</p>
-        </div>
-      `;
-
-      if (exercises.length === 0) {
-        html += `<p class="muted">هنوز حرکتی اضافه نشده است.</p>`;
-      } else {
-        exercises.forEach(function(exercise) {
-          html += `
-            <div class="exercise-card">
-              <h3>حرکت ${exercise.movementNumber}: ${exercise.movement}</h3>
-              <p><strong>تعداد:</strong> ${exercise.reps}</p>
-              <p><strong>ست:</strong> ${exercise.sets}</p>
-              <p><strong>فشار حرکت:</strong> ${exercise.intensity}</p>
-              <p><strong>توضیح فنی:</strong> ${exercise.technicalNote || "-"}</p>
-            </div>
-
-            <div class="rest-preview">
-              <strong>استراحت ${exercise.movementNumber}:</strong>
-              ${exercise.restTime}
-            </div>
-          `;
-        });
-      }
-
-      html += `
-        <div class="exercise-card">
-          <h3>ثبت جلسه و گزارش</h3>
-          <p>در خروجی نهایی، بخش ثبت جلسه بعد از آخرین حرکت قرار می‌گیرد.</p>
-        </div>
-
-        <div class="exercise-card">
-          <h3>پشتیبانی</h3>
-          <p><strong>نام پشتیبان:</strong> ${supportName || "-"}</p>
-          <p><strong>اکانت پشتیبان:</strong> ${supportAccount || "-"}</p>
-        </div>
-      `;
-
-      document.getElementById("preview").innerHTML = html;
-    }
-
-    function restTimeToSeconds(restText) {
-      let seconds = 0;
-
-      const minuteMatch = restText.match(/(\d+)\s*دقیقه/);
-      const secondMatch = restText.match(/(\d+)\s*ثانیه/);
-
-      if (minuteMatch) {
-        seconds += parseInt(minuteMatch[1]) * 60;
-      }
-
-      if (secondMatch) {
-        seconds += parseInt(secondMatch[1]);
-      }
-
-      return seconds || 60;
-    }
-
-    function generateFinalHTML() {
-      const athleteName = document.getElementById("athleteName").value.trim() || "ورزشکار";
-      const programNumber = document.getElementById("programNumber").value.trim() || "-";
-      const generalNote = document.getElementById("generalNote").value.trim();
-
-      const selectedSupport = getSelectedSupport();
-      const supportName = selectedSupport.name || "-";
-      const supportAccount = selectedSupport.account || "-";
-
-      const storagePrefix = "omid_" + athleteName.replace(/\s+/g, "_") + "_program_" + programNumber + "_";
-
-      let exerciseHTML = "";
-
-      exercises.forEach(function(exercise) {
-        const restSeconds = restTimeToSeconds(exercise.restTime);
-
-        let feedbackHTML = "";
-        feedbackOptions.forEach(function(optionText) {
-          feedbackHTML += `
-            <label>
-              <input
-                type="radio"
-                name="feedback-${exercise.movementNumber}"
-                value="${optionText}"
-                data-feedback-key="${storagePrefix}feedback_${exercise.movementNumber}"
-                onchange="saveFeedbackStatus(this)"
-              />
-              ${optionText}
-            </label>
-          `;
-        });
-
-        exerciseHTML += `
-          <section class="exercise-card" data-exercise-number="${exercise.movementNumber}" data-exercise-name="${exercise.movement}">
-            <div class="exercise-top">
-              <div class="exercise-number">${exercise.movementNumber}</div>
-              <div>
-                <span class="exercise-label">حرکت شماره ${exercise.movementNumber}</span>
-                <h2>${exercise.movement}</h2>
-              </div>
-            </div>
-
-            <div class="info-grid">
-              <div class="info-box">
-                <span>تعداد</span>
-                <strong>${exercise.reps}</strong>
-              </div>
-
-              <div class="info-box">
-                <span>ست</span>
-                <strong>${exercise.sets}</strong>
-              </div>
-
-              <div class="info-box">
-                <span>فشار حرکت</span>
-                <strong>${exercise.intensity}</strong>
-              </div>
-            </div>
-
-            <div class="note-box">
-              <span>توضیح فنی مربی</span>
-              <p>${exercise.technicalNote || "-"}</p>
-            </div>
-
-            <div class="feedback-box">
-              <h3>بازخورد این حرکت بعد از انجام</h3>
-              ${feedbackHTML}
-
-              <textarea
-                data-note-key="${storagePrefix}note_${exercise.movementNumber}"
-                oninput="saveExerciseNote(this)"
-                placeholder="توضیح تکمیلی برای مربی. مثلاً: کجا درد داشتی، چه چیزی سخت بود، یا حرکت چطور اجرا شد..."
-              ></textarea>
-            </div>
-          </section>
-
-          <section class="rest-card">
-            <div>
-              <span class="rest-title">استراحت ${exercise.movementNumber}</span>
-              <strong>${exercise.restTime}</strong>
-            </div>
-
-            <div class="timer-box">
-              <div id="timer-${exercise.movementNumber}" class="timer-text">${exercise.restTime}</div>
-
-              <div class="rest-actions">
-                <button onclick="startTimer('timer-${exercise.movementNumber}', ${restSeconds})">
-                  شروع
-                </button>
-
-                <button onclick="pauseTimer('timer-${exercise.movementNumber}')">
-                  توقف
-                </button>
-              </div>
-            </div>
-          </section>
-        `;
-      });
-
-      return `
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>برنامه تخصصی ${athleteName}</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: Tahoma, Arial, sans-serif;
-      background:
-        radial-gradient(circle at top right, rgba(249,115,22,0.22), transparent 30%),
-        linear-gradient(180deg, #020617 0%, #0f172a 34%, #f1f5f9 34%, #f1f5f9 100%);
-      margin: 0;
-      padding: 12px;
-      color: #0f172a;
-      line-height: 1.85;
-    }
-
-    .container {
-      max-width: 820px;
-      margin: auto;
-    }
-
-    .top-image {
-      width: 100%;
-      max-height: 320px;
-      object-fit: cover;
-      border-radius: 24px;
-      margin: 10px 0 14px;
-      box-shadow: 0 18px 35px rgba(0,0,0,0.22);
-      border: 1px solid rgba(255,255,255,0.12);
-    }
-
-    .hero {
-      background: linear-gradient(135deg, #020617, #1e293b);
-      color: white;
-      border-radius: 26px;
-      padding: 26px 22px;
-      margin: 10px 0 16px;
-      box-shadow: 0 18px 35px rgba(0,0,0,0.28);
-      border: 1px solid rgba(255,255,255,0.10);
+    .container { max-width: 920px; margin: 0 auto; padding: 28px 18px 42px; }
+    .header {
       position: relative;
       overflow: hidden;
+      background: linear-gradient(135deg, #ffffff 0%, #f2fbf6 48%, #fff6df 100%);
+      color: var(--ink);
+      padding: 30px 28px;
+      border-radius: 28px;
+      margin-bottom: 18px;
+      box-shadow: 0 18px 45px rgba(15, 84, 61, .12);
+      border: 1px solid rgba(201, 154, 46, .24);
+      text-align: center;
     }
-
-    .hero::after {
-      content: "";
+    .header:before {
+      content: '';
       position: absolute;
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      background: rgba(249,115,22,0.18);
-      left: -45px;
-      top: -45px;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0 48%, rgba(15, 138, 95, .06) 48% 52%, transparent 52% 100%), repeating-linear-gradient(135deg, rgba(15, 138, 95, .04) 0 2px, transparent 2px 18px);
+      pointer-events: none;
     }
-
-    .academy {
-      display: inline-block;
-      background: #f97316;
-      color: white;
-      padding: 7px 15px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: bold;
-      margin-bottom: 12px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .hero h1 {
-      margin: 0;
-      font-size: 25px;
-      line-height: 1.6;
-      position: relative;
-      z-index: 2;
-    }
-
-    .hero .program-number {
-      margin-top: 8px;
-      color: #cbd5e1;
-      font-size: 15px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .repeat-box {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 16px;
-      padding: 12px;
-      margin-top: 14px;
-      color: #e2e8f0;
-      font-size: 14px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .general-note,
-    .reset-card,
-    .session-card,
-    .report-card {
-      background: white;
-      border-radius: 22px;
-      padding: 18px;
-      margin-bottom: 14px;
-      box-shadow: 0 10px 25px rgba(15,23,42,0.08);
-      border-right: 5px solid #f97316;
-    }
-
-    .general-note h2,
-    .reset-card h2,
-    .session-card h2,
-    .report-card h2 {
-      margin: 0 0 8px;
-      font-size: 19px;
-    }
-
-    .general-note p,
-    .report-card p,
-    .reset-card p {
-      margin: 0;
-      color: #334155;
-      font-size: 15px;
-    }
-
-    .reset-card button {
-      width: 100%;
-      margin-top: 14px;
-      border: none;
-      background: #dc2626;
-      color: white;
-      border-radius: 14px;
-      padding: 13px;
-      font-family: inherit;
-      font-weight: bold;
-      font-size: 15px;
-      cursor: pointer;
-    }
-
-    .session-card select,
-    .session-card textarea,
-    .feedback-box textarea {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 13px;
-      border: 1px solid #cbd5e1;
-      border-radius: 14px;
-      font-family: inherit;
-      font-size: 15px;
-      margin-top: 8px;
-      background: #ffffff;
-    }
-
-    .session-card textarea,
-    .feedback-box textarea {
-      min-height: 75px;
-      resize: vertical;
-    }
-
-    .exercise-card {
-      background: white;
-      border-radius: 24px;
-      padding: 18px;
-      margin-bottom: 10px;
-      box-shadow: 0 12px 28px rgba(15,23,42,0.09);
-      border: 1px solid #e2e8f0;
-      overflow: hidden;
-    }
-
-    .exercise-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .exercise-number {
-      min-width: 48px;
-      width: 48px;
-      height: 48px;
-      background: linear-gradient(135deg, #f97316, #ea580c);
-      color: white;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 20px;
-      box-shadow: 0 8px 20px rgba(249,115,22,0.35);
-    }
-
-    .exercise-label {
-      color: #f97316;
-      font-size: 13px;
-      font-weight: bold;
-    }
-
-    .exercise-card h2 {
-      margin: 0;
-      font-size: 21px;
-      color: #0f172a;
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .info-box {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 12px;
-    }
-
-    .info-box span {
-      display: block;
-      color: #64748b;
-      font-size: 12px;
-      margin-bottom: 3px;
-    }
-
-    .info-box strong {
-      display: block;
-      color: #0f172a;
-      font-size: 16px;
-    }
-
-    .note-box {
-      background: #fff7ed;
-      border: 1px solid #fed7aa;
-      border-radius: 16px;
-      padding: 13px;
-    }
-
-    .note-box span {
-      color: #c2410c;
-      font-weight: bold;
-      font-size: 13px;
-    }
-
-    .note-box p {
-      margin: 5px 0 0;
-      color: #431407;
-      font-size: 14px;
-    }
-
-    .feedback-box {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 18px;
-      padding: 14px;
-      margin-top: 12px;
-    }
-
-    .feedback-box h3 {
-      margin: 0 0 10px;
-      font-size: 16px;
-      color: #0f172a;
-    }
-
-    .feedback-box label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 13px;
-      padding: 10px;
-      margin-bottom: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .feedback-box input[type="radio"] {
-      width: 20px;
-      height: 20px;
-      accent-color: #f97316;
-    }
-
-    .rest-card {
-      background: #020617;
-      color: white;
+    .header h1, .header p { position: relative; z-index: 1; }
+    .header h1 { margin: 0 0 8px; font-size: 30px; color: var(--academy-green-dark); letter-spacing: -.2px; }
+    .header p { margin: 0; color: var(--muted); font-size: 16px; }
+    .date-row {
+      background: var(--card);
+      padding: 16px 18px;
       border-radius: 20px;
-      padding: 16px;
-      margin: 0 0 16px;
+      margin-bottom: 18px;
+      box-shadow: 0 12px 26px rgba(15, 84, 61, .08);
+      border: 1px solid var(--line);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      box-shadow: 0 10px 22px rgba(15,23,42,0.16);
-      border-right: 5px solid #f97316;
+      flex-wrap: wrap;
     }
-
-    .rest-title {
-      display: block;
-      color: #fb923c;
-      font-size: 13px;
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-
-    .rest-card strong {
-      font-size: 17px;
-    }
-
-    .timer-box {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .timer-text {
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 12px;
-      padding: 8px 10px;
-      min-width: 82px;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .rest-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .rest-actions button,
-    .report-actions button {
-      border: none;
-      background: #f97316;
-      color: white;
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-family: inherit;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .rest-actions button:nth-child(2) {
-      background: #334155;
-    }
-
-    .report-actions {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .report-actions button {
-      width: 100%;
-      margin: 0;
-    }
-
-    .copy-btn {
-      background: #16a34a !important;
-    }
-
-    .share-btn {
-      background: #2563eb !important;
-    }
-
-    .chart-btn {
-      background: #7c3aed !important;
-    }
-
-    .telegram-btn {
-      background: #0284c7 !important;
-    }
-
-    .chart-wrap {
-      margin-top: 16px;
-      display: none;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 18px;
-      padding: 12px;
-    }
-
-    #feedbackChart {
-      width: 100%;
-      max-width: 760px;
-      display: block;
-      margin: auto;
-      background: #ffffff;
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-    }
-
-    .report-output {
-      display: none;
-      white-space: pre-wrap;
-      background: #020617;
-      color: #e2e8f0;
-      border-radius: 18px;
-      padding: 14px;
-      margin-top: 14px;
-      font-size: 14px;
-      direction: rtl;
-      text-align: right;
-    }
-
-    .support-card,
-    .footer-card {
-      background: #020617;
-      color: white;
+    .date-field { display: flex; align-items: center; gap: 10px; }
+    .date-field label { font-weight: 800; color: var(--academy-green-dark); }
+    .date-field input { width: 170px; }
+    .section-card {
+      background: var(--card);
       border-radius: 24px;
-      padding: 20px;
-      margin-top: 16px;
-      box-shadow: 0 12px 28px rgba(15,23,42,0.20);
+      padding: 24px;
+      box-shadow: 0 16px 36px rgba(15, 84, 61, .09);
+      margin-bottom: 18px;
+      transition: all 0.3s ease;
+      border: 1px solid var(--line);
     }
-
-    .support-card h2,
-    .footer-card h2 {
-      margin: 0 0 12px;
-      font-size: 19px;
-      color: #fb923c;
-    }
-
-    .support-item {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 15px;
-      padding: 12px;
-      margin-bottom: 10px;
-      color: #e2e8f0;
-      font-size: 14px;
-    }
-
-    .support-item strong {
-      color: white;
-    }
-
-    .footer-card p {
-      margin: 8px 0;
-      color: #e2e8f0;
-      font-size: 14px;
-    }
-
-    .final-note {
-      text-align: center;
-      color: #64748b;
-      font-size: 12px;
-      margin: 18px 0 6px;
-    }
-
-    @media (max-width: 560px) {
-      body {
-        padding: 9px;
-      }
-
-      .top-image {
-        border-radius: 20px;
-        max-height: 260px;
-      }
-
-      .hero {
-        border-radius: 22px;
-        padding: 22px 18px;
-      }
-
-      .hero h1 {
-        font-size: 22px;
-      }
-
-      .exercise-card {
-        border-radius: 20px;
-        padding: 15px;
-      }
-
-      .exercise-card h2 {
-        font-size: 19px;
-      }
-
-      .info-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .rest-card {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .timer-box {
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .timer-text {
-        width: 100%;
-      }
-
-      .rest-actions {
-        width: 100%;
-      }
-
-      .rest-actions button {
-        flex: 1;
-      }
-
-      .report-actions {
-        grid-template-columns: 1fr;
-      }
-
-      .support-card,
-      .footer-card {
-        border-radius: 20px;
-        padding: 17px;
-      }
-    }
+    .section-card.moeid { border-right: 7px solid var(--academy-green); }
+    .section-card.general { border-right: 7px solid var(--luxury-gold); }
+    .section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 16px; gap: 12px; }
+    .section-header h2 { margin: 0; font-size: 23px; color: var(--academy-green-dark); }
+    .section-header .badge-percent { font-size: 17px; font-weight: 900; background: linear-gradient(135deg, var(--academy-green-soft), #ffffff); color: var(--academy-green-dark); padding: 7px 16px; border-radius: 999px; border: 1px solid rgba(15, 138, 95, .2); }
+    label { display: block; font-weight: 800; margin-bottom: 6px; font-size: 16px; color: var(--ink); }
+    input[type="text"], input[type="number"], input[type="time"], select { width: 100%; padding: 12px 14px; border: 1px solid #cbded5; border-radius: 16px; font-family: inherit; font-size: 16px; background: #ffffff; color: var(--ink); outline: none; transition: .2s ease; }
+    input:focus, select:focus { border-color: var(--academy-green); box-shadow: 0 0 0 4px rgba(15, 138, 95, .1); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .item { display: flex; justify-content: space-between; align-items: center; padding: 13px 0; border-bottom: 1px dashed #d7e4dd; }
+    .item:last-child { border-bottom: none; }
+    .item-title { font-size: 17px; font-weight: 800; color: var(--ink); }
+    .check-zone { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .check-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 15px; user-select: none; font-weight: 700; margin: 0; padding: 7px 12px; border-radius: 999px; background: #f7fbf8; border: 1px solid #dbe9e1; color: var(--ink); }
+    .check-label input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--academy-green); cursor: pointer; }
+    .skip-label { color: #7a6b3d; background: var(--luxury-gold-soft); border-color: #f0d99b; }
+    .score-summary { background: linear-gradient(135deg, var(--academy-green-soft), #ffffff 62%, var(--luxury-gold-soft)); padding: 14px 16px; border-radius: 18px; margin-top: 16px; display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; font-size: 16px; border: 1px solid rgba(15, 138, 95, .16); color: var(--ink); }
+    .score-summary strong { color: var(--academy-green-dark); font-size: 18px; }
+    .actions-bar { background: var(--card); padding: 18px; border-radius: 24px; margin-top: 18px; box-shadow: 0 14px 32px rgba(15, 84, 61, .09); border: 1px solid var(--line); }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    button { border: none; border-radius: 16px; padding: 13px 20px; cursor: pointer; font-family: inherit; font-weight: 900; font-size: 16px; transition: .2s ease; }
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+    .primary { background: linear-gradient(135deg, var(--academy-green), var(--academy-green-dark)); color: white; box-shadow: 0 10px 22px rgba(15, 138, 95, .22); }
+    .secondary { background: #ffffff; color: var(--academy-green-dark); border: 1px solid #cbded5; }
+    .status { padding: 8px 14px; border-radius: 999px; background: #f9fafb; border: 1px solid var(--line); font-size: 15px; font-weight: 800; }
+    .status.success { background: #e8f7f1; border-color: #b7e4d2; color: #07543d; }
+    .status.error { background: #fff1f1; border-color: #f5b8b8; color: #9b1c1c; }
+    .status.warn { background: #fff8e8; border-color: #efd491; color: #7a5813; }
+    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 18px; background: white; margin-top: 16px; border: 1px solid var(--line); }
+    th, td { padding: 12px; border-bottom: 1px solid #e5eee9; text-align: right; font-size: 15px; }
+    th { background: #f0f8f4; color: var(--academy-green-dark); font-weight: 900; }
+    td { color: var(--ink); }
+    .hidden-fields { display: none !important; }
+    canvas { max-width: 100%; }
+    @media (max-width: 600px) { .container { padding: 16px 12px 28px; } .header { padding: 24px 18px; } .header h1 { font-size: 24px; } .form-row { grid-template-columns: 1fr; } .item { flex-direction: column; align-items: flex-start; gap: 10px; } .check-zone { width: 100%; justify-content: flex-start; } .actions { flex-direction: column; } button { width: 100%; } }
   </style>
 </head>
-
 <body>
-
-  <main class="container">
-
-    ${
-      athleteImageData
-        ? `<img class="top-image" src="${athleteImageData}" alt="تصویر برنامه تمرینی" />`
-        : ""
-    }
-
-    <section class="hero">
-      <div class="academy">آکادمی امیدیاوری</div>
-      <h1>برنامه تخصصی ${athleteName}</h1>
-      <div class="program-number">شماره برنامه: ${programNumber}</div>
-      <div class="repeat-box">
-        این برنامه برای دو هفته طراحی شده و در مجموع ۶ جلسه تمرینی تکرار شود.
-      </div>
-    </section>
-
-    <section class="general-note">
-      <h2>توضیح کلی برنامه</h2>
-      <p>${generalNote || "توضیحی ثبت نشده است."}</p>
-    </section>
-
-    <section class="reset-card">
-      <h2>شروع جلسه جدید</h2>
-      <p>
-        قبل از شروع تمرین، اگر برای یک جلسه جدید برنامه را اجرا می‌کنی، این دکمه را بزن تا بازخوردهای قبلی پاک شود.
-      </p>
-      <button onclick="resetWorkoutDay()">شروع جلسه جدید / Reset</button>
-    </section>
-
-    ${exerciseHTML || "<p>حرکتی برای این برنامه ثبت نشده است.</p>"}
-
-    <section class="session-card">
-      <h2>ثبت جلسه تمرین امروز</h2>
-      <p style="margin-top:0;color:#334155;font-size:14px;">
-        این بخش را بعد از انجام حرکات پر کن تا گزارش قابل استفاده برای مربی و خودت ساخته شود.
-      </p>
-
-      <label>امروز جلسه چندم اجرای برنامه است؟</label>
-      <select id="sessionDay" onchange="saveSessionInfo()">
-        <option value="جلسه ۱">جلسه ۱</option>
-        <option value="جلسه ۲">جلسه ۲</option>
-        <option value="جلسه ۳">جلسه ۳</option>
-        <option value="جلسه ۴">جلسه ۴</option>
-        <option value="جلسه ۵">جلسه ۵</option>
-        <option value="جلسه ۶">جلسه ۶</option>
-      </select>
-
-      <label>حس کلی تمرین امروز</label>
-      <select id="overallFeeling" onchange="saveSessionInfo()">
-        <option value="ثبت نشده">انتخاب نشده</option>
-        <option value="آسان بود">آسان بود</option>
-        <option value="مناسب بود">مناسب بود</option>
-        <option value="سخت بود">سخت بود</option>
-        <option value="خیلی سخت بود">خیلی سخت بود</option>
-      </select>
-
-      <label>یادداشت کلی ورزشکار برای مربی</label>
-      <textarea id="athleteNote" oninput="saveSessionInfo()" placeholder="مثلاً: امروز انرژی کم بود، حرکت پا سخت بود، شانه کمی درد داشت..."></textarea>
-    </section>
-
-    <section class="report-card">
-      <h2>گزارش تمرین برای مربی و ورزشکار</h2>
-      <p>
-        بعد از ثبت بازخورد حرکات، گزارش متنی و نمودار تصویری تولید کن.
-      </p>
-
-      <div class="report-actions">
-        <button onclick="generateCoachReport()">تولید گزارش و نمودار</button>
-        <button class="copy-btn" onclick="copyCoachReport()">کپی گزارش متنی</button>
-        <button class="share-btn" onclick="shareCoachReport()">اشتراک‌گذاری متن</button>
-        <button class="chart-btn" onclick="shareChartImage()">اشتراک‌گذاری نمودار تصویری</button>
-        <button class="telegram-btn" onclick="sendTelegramReport()">ارسال متن در تلگرام</button>
-      </div>
-
-      <div id="chartWrap" class="chart-wrap">
-        <canvas id="feedbackChart" width="1000" height="640"></canvas>
-      </div>
-
-      <div id="reportOutput" class="report-output"></div>
-    </section>
-
-    <section class="support-card">
-      <h2>اطلاعات پشتیبانی</h2>
-
-      <div class="support-item">
-        <strong>نام پشتیبان:</strong>
-        ${supportName}
-      </div>
-
-      <div class="support-item">
-        <strong>اکانت پشتیبان:</strong>
-        ${supportAccount}
-      </div>
-    </section>
-
-    <section class="footer-card">
-      <h2>راه‌های ارتباطی آکادمی</h2>
-      <p><strong>Instagram / Bale / Telegram:</strong> Omid.yavari</p>
-      <p><strong>آدرس باشگاه:</strong> مشهد؛ مجموعه آستان قدس، باشگاه پایش سلامت امید یاوری</p>
-    </section>
-
-    <div class="final-note">
-      طراحی شده برای مشاهده راحت برنامه تمرینی در موبایل
-    </div>
-
-  </main>
+  <div class="container">
+<div class="header">
+<h1>سیستم ارزیابی انضباطی مربیان باشگاه</h1>
+<p>ثبت مشخصات حضور، بررسی موارد اختصاصی مربیان و چک‌لیست عمومی باشگاه</p>
+</div>
+<div class="date-row">
+<div class="date-field">
+<label>تاریخ (شمسی):</label>
+<input id="globalDate" placeholder="مثال: ۱۴۰۵/۰۴/۱۶" type="text"/>
+</div>
+<div class="status warn" id="connectionStatus" style="margin:0; padding: 6px 12px;">وضعیت اتصال: بررسی تنظیمات سیستم...</div>
+</div>
+<div class="section-card moeid" id="sec_moeid">
+<div class="section-header">
+<h2>مربی: معید</h2>
+<div class="badge-percent" id="percent_moeid">۰%</div>
+</div>
+<div class="form-row">
+<div>
+<label>وضعیت حضور</label>
+<select id="attendance_moeid" onchange="handleAttendanceChange('moeid')">
+<option value="حاضر">حاضر</option>
+<option value="غایب">غایب</option>
+</select>
+</div>
+<div></div>
+</div>
+<!-- فیلدهای حضور معید -->
+<div id="presenceFields_moeid">
+<div class="form-row">
+<div>
+<label>ساعت ورود</label>
+<select class="time-select" dir="ltr" id="entry_moeid"></select>
+</div>
+<div>
+<label>ساعت خروج</label>
+<select class="time-select" dir="ltr" id="exit_moeid"></select>
+</div>
+</div>
+<div class="item">
+<div class="item-title">جمع کردن ظرف ناهار</div>
+<div class="check-zone">
+<label class="check-label skip-label">
+<input id="skip_lunch_moeid" onchange="calculateScores()" type="checkbox"/> نبودم / ناهار نداشتم
+            </label>
+<label class="check-label">
+<input class="task_moeid" id="task_lunch_moeid" onchange="calculateScores()" type="checkbox"/> انجام شد
+            </label>
+</div>
+</div>
+<div class="item">
+<div class="item-title">مرتب بودن لباس‌ها</div>
+<div class="check-zone">
+<label class="check-label">
+<input class="task_moeid" onchange="calculateScores()" type="checkbox"/> انجام شد
+            </label>
+</div>
+</div>
+</div>
+<div class="score-summary">
+<span>امتیاز کل معید (اختصاصی + عمومی): <strong id="score_moeid">0</strong> از <span id="max_moeid">20</span></span>
+<span>وضعیت: <strong id="status_moeid">-</strong></span>
+</div>
+</div>
+<div class="section-card general">
+<div class="section-header">
+<h2>چک لیست ارزیابی عمومی باشگاه</h2>
+</div>
+<div class="item">
+<div class="item-title">مرتب بودن میز و اتاق</div>
+<div class="check-zone"><label class="check-label"><input class="public-task" onchange="calculateScores()" type="checkbox"/> انجام شد</label></div>
+</div>
+<div class="item">
+<div class="item-title">خالی کردن سطل آشغال</div>
+<div class="check-zone"><label class="check-label"><input class="public-task" onchange="calculateScores()" type="checkbox"/> انجام شد</label></div>
+</div>
+<div class="item">
+<div class="item-title">مرتب بودن قفسه دمبل‌ها و استپ‌ها</div>
+<div class="check-zone"><label class="check-label"><input class="public-task" onchange="calculateScores()" type="checkbox"/> انجام شد</label></div>
+</div>
+<div class="item">
+<div class="item-title">مرتب بودن قفسه کش‌ها و توپ‌ها</div>
+<div class="check-zone"><label class="check-label"><input class="public-task" onchange="calculateScores()" type="checkbox"/> انجام شد</label></div>
+</div>
+<div class="item">
+<div class="item-title">نظافت جاکفشی</div>
+<div class="check-zone"><label class="check-label"><input class="public-task" onchange="calculateScores()" type="checkbox"/> انجام شد</label></div>
+</div>
+<div class="item">
+<div class="item-title">نظافت رختکن</div>
+<div class="check-zone"><label class="check-label"><input class="public-task" onchange="calculateScores()" type="checkbox"/> انجام شد</label></div>
+</div>
+<div class="item">
+<div class="item-title">تمیزی کلی باشگاه</div>
+<div class="check-zone"><label class="check-label"><input class="public-task" onchange="calculateScores()" type="checkbox"/> انجام شد</label></div>
+</div>
+<div class="item">
+<div class="item-title">خاموش کردن سیستم سرمایش و گرمایش</div>
+<div class="check-zone"><label class="check-label"><input class="public-task" onchange="calculateScores()" type="checkbox"/> انجام شد</label></div>
+</div>
+<div class="item">
+<div class="item-title">تکمیل موجودی یخچال آب معدنی</div>
+<div class="check-zone"><label class="check-label"><input class="public-task" onchange="calculateScores()" type="checkbox"/> انجام شد</label></div>
+</div>
+</div>
+<div class="actions-bar">
+<div class="actions">
+<button class="primary" id="saveAllBtn" onclick="saveEvaluation()">ثبت ارزیابی معید در Google Sheet</button>
+<button class="secondary" onclick="resetAllForms()">فرم جدید</button>
+<button class="secondary" onclick="loadReports()">به‌روزرسانی اطلاعات و نمودار</button>
+</div>
+</div>
+<div class="section-card" style="padding:20px;">
+<h2 style="margin-top:0; font-size: 18px; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">نمودار روند عملکرد معید در ماه جاری</h2>
+<div style="position: relative; width: 100%; height: 300px;">
+<canvas id="monthlyChart"></canvas>
+</div>
+</div>
+<div class="section-card" style="padding:16px;">
+<h2 style="margin-top:0; font-size: 18px; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">سوابق ثبت شده معید در شبکه</h2>
+<div style="overflow-x: auto;">
+<table>
+<thead>
+<tr>
+<th>تاریخ</th>
+<th>نام مربی</th>
+<th>وضعیت حضور</th>
+<th>ورود</th>
+<th>خروج</th>
+<th>امتیاز نهایی</th>
+<th>درصد عملکرد</th>
+</tr>
+</thead>
+<tbody id="reportTable"></tbody>
+</table>
+</div>
+</div>
+  </div>
 
   <script>
-    const timers = {};
-    const storagePrefix = "${storagePrefix}";
-    const athleteName = "${athleteName}";
-    const programNumber = "${programNumber}";
+    const SHEET_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzS-y5C3zLaD3WsufgFHF_Vz_SwNgO2x5ZKLOIa_Vz8LqJqOLf8o4zC9Udomz_uX_KM/exec';
+    const COACH_ID = 'moeid';
+    const COACH_NAME = 'معید';
+    const COACH_COLOR = '#0f8a5f';
+    let globalChartInstance = null;
 
-    const feedbackLabels = [
-      "مناسب بود",
-      "درد خفیف داشتم",
-      "درد داشتم"
-    ];
-
-    let lastReportText = "";
-
-    function formatTime(seconds) {
-      const min = Math.floor(seconds / 60);
-      const sec = seconds % 60;
-
-      if (min > 0) {
-        return min + ":" + String(sec).padStart(2, "0");
-      }
-
-      return sec + " ثانیه";
+    function getPersianDate() {
+      return new Date().toLocaleDateString('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit' });
     }
 
-    function playFinishSound() {
-      try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-        const duration = 8;
-        const beepLength = 0.35;
-        const gapLength = 0.25;
-        const frequency = 880;
-
-        for (let time = 0; time < duration; time += beepLength + gapLength) {
-          const oscillator = audioContext.createOscillator();
-          const gainNode = audioContext.createGain();
-
-          oscillator.type = "sine";
-          oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + time);
-
-          gainNode.gain.setValueAtTime(0.001, audioContext.currentTime + time);
-          gainNode.gain.linearRampToValueAtTime(0.28, audioContext.currentTime + time + 0.03);
-          gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + time + beepLength);
-
-          oscillator.connect(gainNode);
-          gainNode.connect(audioContext.destination);
-
-          oscillator.start(audioContext.currentTime + time);
-          oscillator.stop(audioContext.currentTime + time + beepLength);
+    function populateTimeSelects() {
+      const selects = document.querySelectorAll('.time-select');
+      selects.forEach(select => {
+        select.innerHTML = '<option value="">انتخاب ساعت</option>';
+        for (let hour = 6; hour <= 22; hour++) {
+          ['00', '30'].forEach(minute => {
+            if (hour === 22 && minute === '30') return;
+            const value = String(hour).padStart(2, '0') + ':' + minute;
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = value;
+            select.appendChild(option);
+          });
         }
-      } catch (error) {
-        console.log("Sound is not supported on this device.");
-      }
+      });
     }
 
-    function startTimer(elementId, totalSeconds) {
-      const element = document.getElementById(elementId);
+    document.getElementById('globalDate').value = getPersianDate();
+    populateTimeSelects();
 
-      if (!timers[elementId]) {
-        timers[elementId] = {
-          remaining: totalSeconds,
-          interval: null,
-          total: totalSeconds
+    function isConfigured() {
+      return SHEET_WEB_APP_URL && SHEET_WEB_APP_URL.startsWith('https://script.google.com/macros/s/');
+    }
+
+    function setStatus(message, type = 'warn') {
+      const box = document.getElementById('connectionStatus');
+      box.className = 'status ' + type;
+      box.textContent = message;
+    }
+
+    function handleAttendanceChange(coach) {
+      const status = document.getElementById('attendance_' + coach).value;
+      const targetDiv = document.getElementById('presenceFields_' + coach);
+      
+      if (status === 'حاضر') {
+        targetDiv.classList.remove('hidden-fields');
+      } else {
+        targetDiv.classList.add('hidden-fields');
+        document.getElementById('entry_' + coach).value = '';
+        document.getElementById('exit_' + coach).value = '';
+        document.getElementById('skip_lunch_' + coach).checked = false;
+        document.querySelectorAll('.task_' + coach).forEach(cb => cb.checked = false);
+      }
+      calculateScores();
+    }
+
+    function calculateScores() {
+      const publicCheckboxes = [...document.querySelectorAll('.public-task')];
+      let publicScore = 0;
+      publicCheckboxes.forEach(cb => {
+        if (cb.checked) publicScore += 2;
+      });
+
+      const coach = COACH_ID;
+      const attendance = document.getElementById('attendance_' + coach).value;
+      
+      if (attendance !== 'حاضر') {
+        document.getElementById('score_' + coach).textContent = '0';
+        document.getElementById('max_' + coach).textContent = '0';
+        document.getElementById('percent_' + coach).textContent = '0%';
+        document.getElementById('status_' + coach).textContent = 'غایب';
+        return;
+      }
+
+      const isSkipped = document.getElementById('skip_lunch_' + coach).checked;
+      const lunchTask = document.getElementById('task_lunch_' + coach);
+      
+      if (isSkipped) {
+        lunchTask.checked = false;
+        lunchTask.disabled = true;
+      } else {
+        lunchTask.disabled = false;
+      }
+
+      const personalCheckboxes = [...document.querySelectorAll('.task_' + coach)];
+      let personalScore = 0;
+      let personalCount = isSkipped ? 1 : 2;
+
+      personalCheckboxes.forEach(cb => {
+        if (!cb.disabled && cb.checked) personalScore += 2;
+      });
+
+      const totalScore = personalScore + publicScore;
+      const totalItems = personalCount + 9;
+      const maxScore = totalItems * 2;
+      const percent = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
+
+      document.getElementById('score_' + coach).textContent = totalScore;
+      document.getElementById('max_' + coach).textContent = maxScore;
+      document.getElementById('percent_' + coach).textContent = percent + '%';
+      
+      let statusText = 'نیاز به پیگیری';
+      if (percent >= 85) statusText = 'عالی';
+      else if (percent >= 60) statusText = 'قابل قبول';
+      document.getElementById('status_' + coach).textContent = statusText;
+    }
+
+    function getEvaluationDataFor(coach, nameKey) {
+      const attendance = document.getElementById('attendance_' + coach).value;
+      if (attendance !== 'حاضر') {
+        return {
+          formType: 'Coach',
+          date: document.getElementById('globalDate').value,
+          coachName: nameKey,
+          attendanceStatus: attendance,
+          entryTime: '-',
+          exitTime: '-',
+          ratings: ['غایب'],
+          note: '', 
+          total: 0,
+          max: 0,
+          percent: 0,
+          createdAt: new Date().toLocaleString('fa-IR')
         };
       }
 
-      if (timers[elementId].interval) {
+      const isSkipped = document.getElementById('skip_lunch_' + coach).checked;
+      const personalCheckboxes = [...document.querySelectorAll('.task_' + coach)];
+      const publicCheckboxes = [...document.querySelectorAll('.public-task')];
+
+      let personalScore = 0;
+      let personalCount = isSkipped ? 1 : 2;
+      personalCheckboxes.forEach(cb => { if (!cb.disabled && cb.checked) personalScore += 2; });
+
+      let publicScore = 0;
+      publicCheckboxes.forEach(cb => { if (cb.checked) publicScore += 2; });
+
+      const totalScore = personalScore + publicScore;
+      const maxScore = (personalCount + 9) * 2;
+      const percent = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
+
+      const personalStatus = personalCheckboxes.map(cb => cb.disabled ? 'نبودم' : (cb.checked ? '۱' : '۰')).join(',');
+      const publicStatus = publicCheckboxes.map(cb => cb.checked ? '۱' : '۰').join(',');
+
+      return {
+        date: document.getElementById('globalDate').value,
+        coachName: nameKey,
+        attendanceStatus: attendance,
+        entryTime: document.getElementById('entry_' + coach).value || '-',
+        exitTime: document.getElementById('exit_' + coach).value || '-',
+        ratings: [personalStatus, publicStatus],
+        note: '', 
+        total: totalScore,
+        max: maxScore,
+        percent: percent,
+        createdAt: new Date().toLocaleString('fa-IR')
+      };
+    }
+
+    async function saveEvaluation() {
+      if (!isConfigured()) {
+        alert('لطفاً ابتدا آدرس وب‌اپ را در متغیر SHEET_WEB_APP_URL قرار دهید.');
         return;
       }
 
-      element.textContent = formatTime(timers[elementId].remaining);
+      const btn = document.getElementById('saveAllBtn');
+      btn.disabled = true;
+      setStatus('در حال ارسال داده‌های ارزیابی...', 'warn');
 
-      timers[elementId].interval = setInterval(function() {
-        timers[elementId].remaining--;
-        element.textContent = formatTime(timers[elementId].remaining);
+      const data = getEvaluationDataFor(COACH_ID, COACH_NAME);
 
-        if (timers[elementId].remaining <= 0) {
-          clearInterval(timers[elementId].interval);
-          timers[elementId].interval = null;
-          timers[elementId].remaining = timers[elementId].total;
-          element.textContent = "پایان استراحت";
-          playFinishSound();
-        }
-      }, 1000);
-    }
-
-    function pauseTimer(elementId) {
-      if (timers[elementId] && timers[elementId].interval) {
-        clearInterval(timers[elementId].interval);
-        timers[elementId].interval = null;
-      }
-    }
-
-    function saveFeedbackStatus(radio) {
-      const key = radio.getAttribute("data-feedback-key");
-      localStorage.setItem(key, radio.value);
-    }
-
-    function saveExerciseNote(textarea) {
-      const key = textarea.getAttribute("data-note-key");
-      localStorage.setItem(key, textarea.value);
-    }
-
-    function saveSessionInfo() {
-      localStorage.setItem(storagePrefix + "sessionDay", document.getElementById("sessionDay").value);
-      localStorage.setItem(storagePrefix + "overallFeeling", document.getElementById("overallFeeling").value);
-      localStorage.setItem(storagePrefix + "athleteNote", document.getElementById("athleteNote").value);
-    }
-
-    function loadSavedData() {
-      document.querySelectorAll(".feedback-box input[type='radio']").forEach(function(radio) {
-        const key = radio.getAttribute("data-feedback-key");
-        radio.checked = localStorage.getItem(key) === radio.value;
-      });
-
-      document.querySelectorAll(".feedback-box textarea").forEach(function(textarea) {
-        const key = textarea.getAttribute("data-note-key");
-        textarea.value = localStorage.getItem(key) || "";
-      });
-
-      document.getElementById("sessionDay").value = localStorage.getItem(storagePrefix + "sessionDay") || "جلسه ۱";
-      document.getElementById("overallFeeling").value = localStorage.getItem(storagePrefix + "overallFeeling") || "ثبت نشده";
-      document.getElementById("athleteNote").value = localStorage.getItem(storagePrefix + "athleteNote") || "";
-    }
-
-    function getFeedbackForExercise(number) {
-      return localStorage.getItem(storagePrefix + "feedback_" + number) || "ثبت نشده";
-    }
-
-    function getNoteForExercise(number) {
-      return localStorage.getItem(storagePrefix + "note_" + number) || "";
-    }
-
-    function getCounts() {
-      const counts = {};
-      feedbackLabels.forEach(function(label) {
-        counts[label] = 0;
-      });
-
-      document.querySelectorAll(".exercise-card[data-exercise-number]").forEach(function(card) {
-        const number = card.getAttribute("data-exercise-number");
-        const feedback = getFeedbackForExercise(number);
-
-        if (counts.hasOwnProperty(feedback)) {
-          counts[feedback]++;
-        }
-      });
-
-      return counts;
-    }
-
-    function generateCoachReport() {
-      const sessionDay = document.getElementById("sessionDay").value;
-      const overallFeeling = document.getElementById("overallFeeling").value;
-      const athleteNote = document.getElementById("athleteNote").value.trim();
-      const today = new Date().toLocaleDateString("fa-IR");
-      const counts = getCounts();
-
-      let totalExercises = 0;
-      let answeredExercises = 0;
-
-      let report = "";
-      report += "گزارش تمرین ورزشکار\\n";
-      report += "نام ورزشکار: " + athleteName + "\\n";
-      report += "شماره برنامه: " + programNumber + "\\n";
-      report += "جلسه اجرا: " + sessionDay + "\\n";
-      report += "تاریخ ثبت گزارش: " + today + "\\n";
-      report += "حس کلی تمرین: " + overallFeeling + "\\n";
-      report += "-----------------------------\\n";
-
-      document.querySelectorAll(".exercise-card[data-exercise-number]").forEach(function(card) {
-        totalExercises++;
-
-        const number = card.getAttribute("data-exercise-number");
-        const name = card.getAttribute("data-exercise-name");
-
-        const feedback = getFeedbackForExercise(number);
-        const note = getNoteForExercise(number);
-
-        if (feedback !== "ثبت نشده") {
-          answeredExercises++;
-        }
-
-        report += "حرکت " + number + " - " + name + "\\n";
-        report += "بازخورد ورزشکار: " + feedback + "\\n";
-
-        if (note) {
-          report += "توضیح ورزشکار: " + note + "\\n";
-        }
-
-        report += "-----------------------------\\n";
-      });
-
-      report += "خلاصه برای مربی و ورزشکار:\\n";
-      report += "تعداد کل حرکات: " + totalExercises + "\\n";
-      report += "تعداد حرکات دارای بازخورد: " + answeredExercises + "\\n";
-
-      feedbackLabels.forEach(function(label) {
-        report += label + ": " + counts[label] + "\\n";
-      });
-
-      if (athleteNote) {
-        report += "-----------------------------\\n";
-        report += "یادداشت کلی ورزشکار:\\n";
-        report += athleteNote + "\\n";
-      }
-
-      document.getElementById("reportOutput").style.display = "block";
-      document.getElementById("reportOutput").textContent = report;
-
-      drawFeedbackChart(counts, totalExercises, sessionDay, overallFeeling);
-      lastReportText = report;
-
-      return report;
-    }
-
-    function drawRoundedRect(ctx, x, y, width, height, radius) {
-      const r = Math.min(radius, width / 2, height / 2);
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.arcTo(x + width, y, x + width, y + height, r);
-      ctx.arcTo(x + width, y + height, x, y + height, r);
-      ctx.arcTo(x, y + height, x, y, r);
-      ctx.arcTo(x, y, x + width, y, r);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    function drawFeedbackChart(counts, totalExercises, sessionDay, overallFeeling) {
-      const canvas = document.getElementById("feedbackChart");
-      const ctx = canvas.getContext("2d");
-
-      const w = canvas.width;
-      const h = canvas.height;
-
-      ctx.clearRect(0, 0, w, h);
-
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, w, h);
-
-      ctx.direction = "rtl";
-      ctx.textAlign = "center";
-
-      ctx.fillStyle = "#020617";
-      ctx.font = "bold 34px Tahoma, Arial";
-      ctx.fillText("نمودار بازخورد تمرین", w / 2, 55);
-
-      ctx.font = "24px Tahoma, Arial";
-      ctx.fillStyle = "#334155";
-      ctx.fillText("ورزشکار: " + athleteName + " | " + sessionDay + " | برنامه " + programNumber, w / 2, 95);
-
-      ctx.font = "22px Tahoma, Arial";
-      ctx.fillStyle = "#64748b";
-      ctx.fillText("حس کلی تمرین: " + overallFeeling, w / 2, 128);
-
-      const chartLeft = 110;
-      const chartRight = 910;
-      const chartTop = 170;
-      const chartBottom = 500;
-      const chartHeight = chartBottom - chartTop;
-      const chartWidth = chartRight - chartLeft;
-
-      const maxCount = Math.max(1, ...feedbackLabels.map(function(label) { return counts[label]; }));
-      const ySteps = Math.max(maxCount, 4);
-
-      ctx.strokeStyle = "#cbd5e1";
-      ctx.lineWidth = 2;
-
-      ctx.beginPath();
-      ctx.moveTo(chartLeft, chartTop);
-      ctx.lineTo(chartLeft, chartBottom);
-      ctx.lineTo(chartRight, chartBottom);
-      ctx.stroke();
-
-      ctx.font = "18px Tahoma, Arial";
-      ctx.fillStyle = "#475569";
-      ctx.textAlign = "right";
-
-      for (let i = 0; i <= ySteps; i++) {
-        const y = chartBottom - (i / ySteps) * chartHeight;
-
-        ctx.strokeStyle = "#e2e8f0";
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(chartLeft, y);
-        ctx.lineTo(chartRight, y);
-        ctx.stroke();
-
-        ctx.fillStyle = "#475569";
-        ctx.fillText(String(i), chartLeft - 15, y + 6);
-      }
-
-      const barGap = 70;
-      const barWidth = (chartWidth - barGap * (feedbackLabels.length + 1)) / feedbackLabels.length;
-
-      feedbackLabels.forEach(function(label, index) {
-        const value = counts[label];
-        const x = chartLeft + barGap + index * (barWidth + barGap);
-        const barHeight = (value / ySteps) * chartHeight;
-        const y = chartBottom - barHeight;
-
-        ctx.fillStyle = "#f97316";
-        drawRoundedRect(ctx, x, y, barWidth, barHeight || 2, 10);
-
-        ctx.fillStyle = "#0f172a";
-        ctx.font = "bold 24px Tahoma, Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(String(value), x + barWidth / 2, y - 12);
-
-        ctx.fillStyle = "#0f172a";
-        ctx.font = "20px Tahoma, Arial";
-        ctx.fillText(label, x + barWidth / 2, chartBottom + 40);
-      });
-
-      ctx.direction = "rtl";
-      ctx.textAlign = "center";
-      ctx.fillStyle = "#64748b";
-      ctx.font = "18px Tahoma, Arial";
-      ctx.fillText("محور افقی: نوع بازخورد ورزشکار | محور عمودی: تعداد تکرار هر بازخورد", w / 2, 600);
-
-      document.getElementById("chartWrap").style.display = "block";
-    }
-
-    function copyCoachReport() {
-      const report = generateCoachReport();
-
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(report).then(function() {
-          alert("گزارش متنی کپی شد.");
+      try {
+        await fetch(SHEET_WEB_APP_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(data)
         });
-      } else {
-        alert("کپی خودکار در این مرورگر پشتیبانی نمی‌شود. متن گزارش را دستی کپی کن.");
+
+        setStatus('ارزیابی مربی با موفقیت در گوگل شیت ذخیره شد.', 'success');
+        alert('اطلاعات با موفقیت ثبت شد.');
+        resetAllForms(false);
+        loadReports();
+      } catch (error) {
+        console.error(error);
+        setStatus('خطا در اتصال به شبکه یا اسکریپت گوگل.', 'error');
+      } finally {
+        btn.disabled = false;
       }
     }
 
-    function shareCoachReport() {
-      const report = generateCoachReport();
+    function loadReports() {
+      if (!isConfigured()) return;
+      setStatus('در حال به‌روزرسانی اطلاعات و نمودار...', 'warn');
+      
+      const callbackName = 'cb_' + Date.now();
+      const script = document.createElement('script');
 
-      if (navigator.share) {
-        navigator.share({
-          title: "گزارش تمرین " + athleteName,
-          text: report
-        });
-      } else {
-        alert("اشتراک‌گذاری مستقیم متن در این مرورگر پشتیبانی نمی‌شود. از دکمه کپی گزارش استفاده کن.");
-      }
-    }
-
-    function shareChartImage() {
-      generateCoachReport();
-
-      const canvas = document.getElementById("feedbackChart");
-
-      canvas.toBlob(function(blob) {
-        if (!blob) {
-          alert("ساخت تصویر نمودار انجام نشد.");
-          return;
-        }
-
-        const file = new File([blob], "training-report-chart.png", { type: "image/png" });
-
-        if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
-          navigator.share({
-            title: "نمودار گزارش تمرین " + athleteName,
-            text: "نمودار تصویری گزارش تمرین " + athleteName,
-            files: [file]
+      window[callbackName] = function(res) {
+        if(res && res.ok) {
+          const tbody = document.getElementById('reportTable');
+          tbody.innerHTML = '';
+          const coachRows = res.data.filter(r => r.coachName === COACH_NAME);
+          
+          coachRows.forEach(r => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${r.date || '-'}</td>
+              <td><strong>${r.coachName || '-'}</strong></td>
+              <td>${r.attendanceStatus || 'حاضر'}</td>
+              <td>${r.entryTime || '-'}</td>
+              <td>${r.exitTime || '-'}</td>
+              <td>${r.total} از ${r.max}</td>
+              <td>${r.percent}%</td>
+            `;
+            tbody.appendChild(row);
           });
-        } else {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "training-report-chart.png";
-          a.click();
-          URL.revokeObjectURL(url);
-          alert("اشتراک‌گذاری تصویر در این مرورگر پشتیبانی نشد. تصویر نمودار دانلود شد.");
+          
+          updateMonthlyChart(coachRows);
+          setStatus('اطلاعات و نمودار عملکرد ماهانه به‌روز شدند.', 'success');
         }
-      }, "image/png");
+        delete window[callbackName];
+        script.remove();
+      };
+      script.src = SHEET_WEB_APP_URL + '?action=list&callback=' + callbackName + '&t=' + Date.now();
+      document.body.appendChild(script);
     }
 
-    function sendTelegramReport() {
-      const report = generateCoachReport();
-      const url = "https://t.me/share/url?text=" + encodeURIComponent(report);
-      window.open(url, "_blank");
-    }
+    function updateMonthlyChart(reportsData) {
+      if (!reportsData || reportsData.length === 0) return;
 
-    function resetWorkoutDay() {
-      if (!confirm("آیا مطمئنی می‌خواهی بازخوردها، یادداشت‌ها و گزارش این جلسه پاک شود؟")) {
-        return;
+      const currentPersianDate = document.getElementById('globalDate').value;
+      const parts = currentPersianDate.split('/');
+      if (parts.length < 2) return;
+      const currentYearMonth = parts[0] + '/' + parts[1]; 
+
+      const chronologicalData = [...reportsData].reverse();
+      const filtered = chronologicalData.filter(r => r.date && r.date.startsWith(currentYearMonth));
+      const uniqueDates = [...new Set(filtered.map(r => r.date))];
+      
+      const coachData = uniqueDates.map(d => {
+        const found = filtered.find(r => r.date === d && r.coachName === COACH_NAME);
+        return found ? Number(found.percent) : null;
+      });
+
+      if (globalChartInstance) {
+        globalChartInstance.destroy();
       }
 
-      document.querySelectorAll(".feedback-box input[type='radio']").forEach(function(radio) {
-        localStorage.removeItem(radio.getAttribute("data-feedback-key"));
-        radio.checked = false;
-      });
-
-      document.querySelectorAll(".feedback-box textarea").forEach(function(textarea) {
-        localStorage.removeItem(textarea.getAttribute("data-note-key"));
-        textarea.value = "";
-      });
-
-      localStorage.removeItem(storagePrefix + "overallFeeling");
-      localStorage.removeItem(storagePrefix + "athleteNote");
-
-      document.getElementById("overallFeeling").value = "ثبت نشده";
-      document.getElementById("athleteNote").value = "";
-      document.getElementById("reportOutput").style.display = "none";
-      document.getElementById("chartWrap").style.display = "none";
-
-      Object.keys(timers).forEach(function(key) {
-        if (timers[key].interval) {
-          clearInterval(timers[key].interval);
+      const ctx = document.getElementById('monthlyChart').getContext('2d');
+      globalChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: uniqueDates.map(d => d.split('/')[2]), 
+          datasets: [
+            {
+              label: 'روند عملکرد ' + COACH_NAME + ' (%)',
+              data: coachData,
+              borderColor: COACH_COLOR,
+              backgroundColor: 'rgba(15, 138, 95, 0.12)',
+              borderWidth: 3,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              fill: true,
+              tension: 0.35,
+              spanGaps: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { font: { family: 'B Nazanin', size: 15 }, color: '#17342b' } }
+          },
+          scales: {
+            y: { min: 0, max: 100, grid: { color: '#e2eee7' }, ticks: { color: '#6b7c73', font: { family: 'B Nazanin', size: 14 } } },
+            x: { grid: { color: '#eef5ef' }, ticks: { color: '#6b7c73', font: { family: 'B Nazanin', size: 14 } }, title: { display: true, text: 'روزهای ماه جاری', color: '#17342b', font: { family: 'B Nazanin', size: 15 } } }
+          }
         }
-
-        delete timers[key];
       });
-
-      alert("اطلاعات این جلسه پاک شد. آماده شروع جلسه جدید هستی.");
     }
 
-    loadSavedData();
-  <\/script>
+    function resetAllForms(showMsg = true) {
+      document.getElementById('globalDate').value = getPersianDate();
+      
+      const c = COACH_ID;
+      document.getElementById('attendance_' + c).selectedIndex = 0;
+      document.getElementById('entry_' + c).value = '';
+      document.getElementById('exit_' + c).value = '';
+      document.getElementById('skip_lunch_' + c).checked = false;
+      
+      document.querySelectorAll('.task_' + c).forEach(cb => {
+        cb.checked = false;
+        cb.disabled = false;
+      });
+      handleAttendanceChange(c);
 
-</body>
-</html>
-      `;
+      document.querySelectorAll('.public-task').forEach(cb => cb.checked = false);
+
+      calculateScores();
+      if(showMsg) setStatus('فرم‌ها ریست شدند و آماده ثبت جدید هستند.', 'success');
     }
 
-    function downloadHTML() {
-      if (exercises.length === 0) {
-        alert("اول حداقل یک حرکت اضافه کن.");
-        return;
-      }
-
-      const athleteName = document.getElementById("athleteName").value.trim() || "program";
-      const programNumber = document.getElementById("programNumber").value.trim() || "number";
-
-      const finalHTML = generateFinalHTML();
-      const blob = new Blob([finalHTML], { type: "text/html;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-
-      const safeName = athleteName.replace(/\s+/g, "-");
-      const fileName = safeName + "-program-" + programNumber + ".html";
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = fileName;
-      a.click();
-
-      URL.revokeObjectURL(url);
+    handleAttendanceChange(COACH_ID);
+    calculateScores();
+    
+    if(isConfigured()) {
+      loadReports();
     }
-
-    fillRepsOptions();
-    fillSetsOptions();
-    fillRestOptions();
-    renderPreview();
   </script>
-
 </body>
 </html>
