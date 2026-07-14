@@ -164,7 +164,7 @@
 </div>
 </div>
 <div class="score-summary">
-<span>امتیاز کل معید (اختصاصی + عمومی): <strong id="score_moeid">0</strong> از <span id="max_moeid">20</span></span>
+<span>امتیاز کل معید (اختصاصی + عمومی): <strong id="score_moeid">0</strong> از <span id="max_moeid">22</span></span>
 <span>وضعیت: <strong id="status_moeid">-</strong></span>
 </div>
 </div>
@@ -308,9 +308,10 @@
         if (!cb.disabled && cb.checked) personalScore += 2;
       });
 
-      const totalScore = personalScore + publicScore;
-      const totalItems = personalCount + 9;
-      const maxScore = totalItems * 2;
+      const rawScore = personalScore + publicScore;
+      const rawMaxScore = (personalCount + 9) * 2;
+      const maxScore = 20;
+      const totalScore = rawMaxScore > 0 ? Math.round((rawScore / rawMaxScore) * maxScore) : 0;
       const percent = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
 
       document.getElementById('score_' + coach).textContent = totalScore;
@@ -335,8 +336,10 @@
       let publicScore = 0;
       publicCheckboxes.forEach(cb => { if (cb.checked) publicScore += 2; });
 
-      const totalScore = personalScore + publicScore;
-      const maxScore = (personalCount + 9) * 2;
+      const rawScore = personalScore + publicScore;
+      const rawMaxScore = (personalCount + 9) * 2;
+      const maxScore = 20;
+      const totalScore = rawMaxScore > 0 ? Math.round((rawScore / rawMaxScore) * maxScore) : 0;
       const percent = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
 
       const personalStatus = personalCheckboxes.map(cb => cb.disabled ? 'نبودم' : (cb.checked ? '۱' : '۰')).join(',');
